@@ -1,0 +1,22 @@
+name: Automated DAST Security Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    name: OWASP ZAP Baseline Scan
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run OWASP ZAP Scan
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          target: 'https://example.com' # staging url
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a'

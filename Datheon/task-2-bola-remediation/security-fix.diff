@@ -1,0 +1,22 @@
+--- a/vulnerable.js
++++ b/secure.js
+@@ -1,10 +1,14 @@
+-app.get('/rest/basket/:id', (req, res) => {
+-    const basketId = req.params.id;
++app.get('/rest/basket/:id', authenticateToken, (req, res) => {
++    const requestedBasketId = req.params.id;
++    const loggedInUserId = req.user.id;
+     
+-    // VULNERABILITY: Blind lookup
+-    const basket = database.findBasketById(basketId);
++    // FIX: Filter by BOTH basket ID and User ID
++    const basket = database.findBasketByUserAndId(requestedBasketId, loggedInUserId);
+     
+-    if (basket) {
++    if (basket) {
+         res.status(200).json(basket);
+     } else {
+-        res.status(404).json({ error: "Basket not found" });
++        res.status(403).json({ error: "Unauthorized access to this basket" });
+     }
+ });
